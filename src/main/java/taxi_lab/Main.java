@@ -1,5 +1,6 @@
 package taxi_lab;
 
+import org.apache.spark.Accumulator;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -48,6 +49,18 @@ public class Main {
         Double totalBostonKm = bostonTrips.mapToDouble(Trip::getKm).sum();
         System.out.println("totalBostonKm = " + totalBostonKm);
 
+
+        Counter counter = new Counter();
+        Accumulator<Integer> longTrips = sc.accumulator(0);
+        tripRdd.foreach(trip -> {
+            if (trip.getKm() > 10) {
+                longTrips.add(1);
+            }
+        });
+
+
+        Integer value = longTrips.value();
+        System.out.println("value = " + value);
 
     }
 }
